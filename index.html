@@ -546,12 +546,109 @@
             border-color: rgba(255, 255, 255, 0.15);
         }
         
+        /* 产品图片区域 - 完全重新设计 */
         .product-visual {
-            height: 180px;
+            height: 220px; /* 增加高度以容纳图片 */
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4.5rem;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        /* 图片容器 - 统一所有图片展示 */
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        /* 产品图片 - 自适应处理 */
+        .product-image {
+            max-width: 85%;
+            max-height: 85%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            transition: all 0.4s ease;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+        }
+        
+        /* 图片加载失败时的备用显示 */
+        .image-fallback {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .fallback-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        .fallback-text {
+            font-size: 1rem;
+            color: #a3b1c6;
+        }
+        
+        /* 图片加载指示器 */
+        .image-loading {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #4fc3f7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 根据产品类别设置不同的背景渐变 */
+        .product-card[data-category="puff"] .product-visual {
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.08) 0%, rgba(79, 195, 247, 0.15) 100%);
+        }
+        
+        .product-card[data-category="bar"] .product-visual {
+            background: linear-gradient(135deg, rgba(102, 187, 106, 0.08) 0%, rgba(102, 187, 106, 0.15) 100%);
+        }
+        
+        .product-card[data-category="shrimp"] .product-visual {
+            background: linear-gradient(135deg, rgba(255, 138, 101, 0.08) 0%, rgba(255, 138, 101, 0.15) 100%);
+        }
+        
+        .product-card[data-category="roll"] .product-visual {
+            background: linear-gradient(135deg, rgba(255, 213, 79, 0.08) 0%, rgba(255, 213, 79, 0.15) 100%);
+        }
+        
+        .product-card[data-category="rice"] .product-visual {
+            background: linear-gradient(135deg, rgba(186, 104, 200, 0.08) 0%, rgba(186, 104, 200, 0.15) 100%);
+        }
+        
+        .product-card[data-category="other"] .product-visual {
+            background: linear-gradient(135deg, rgba(77, 182, 172, 0.08) 0%, rgba(77, 182, 172, 0.15) 100%);
         }
         
         .product-info {
@@ -581,27 +678,8 @@
         .product-desc {
             font-size: 0.95rem;
             color: #a3b1c6;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             line-height: 1.5;
-        }
-        
-        .product-link {
-            display: inline-block;
-            background: linear-gradient(90deg, #4fc3f7, #3a8fb7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-        
-        .product-link:hover {
-            background: linear-gradient(90deg, #3a8fb7, #2a6f94);
-            box-shadow: 0 5px 15px rgba(79, 195, 247, 0.3);
         }
         
         .capability-badge {
@@ -643,6 +721,10 @@
             
             .tag-ring-outer { width: 650px; height: 650px; }
             .tag-ring-inner { width: 550px; height: 550px; }
+            
+            .product-visual {
+                height: 200px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -689,6 +771,31 @@
             
             .products-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .product-visual {
+                height: 180px;
+            }
+            
+            .product-image {
+                max-width: 80%;
+                max-height: 80%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-visual {
+                height: 160px;
+            }
+            
+            .product-image {
+                max-width: 75%;
+                max-height: 75%;
+                padding: 8px;
+            }
+            
+            .fallback-icon {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -1187,68 +1294,103 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(79, 195, 247, 0.1); color: #4fc3f7;">
-                                👆
+                        <!-- 产品1：手指泡芙（强化钙铁锌、DHA） -->
+                        <div class="product-card" data-category="puff">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/puff1.jpg" alt="手指泡芙" class="product-image" 
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">👆</div>
+                                        <div class="fallback-text">手指泡芙</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">高钙芝士手指泡芙</div>
+                                <div class="product-name">手指泡芙</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">婴标</span>
+                                    <span class="product-tag">强化钙铁锌</span>
+                                    <span class="product-tag">DHA</span>
+                                    <span class="product-tag">婴标品质</span>
+                                </div>
+                                <p class="product-desc">手指形状方便抓握，强化钙铁锌与DHA，促进婴幼儿骨骼与脑部发育，清洁标签配方。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品2：星星泡芙 -->
+                        <div class="product-card" data-category="puff">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/puff2.jpg" alt="星星泡芙" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">⭐</div>
+                                        <div class="fallback-text">星星泡芙</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">星星泡芙</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">星空系列</span>
+                                    <span class="product-tag">趣味造型</span>
+                                    <span class="product-tag">益生元</span>
+                                </div>
+                                <p class="product-desc">星星造型激发宝宝兴趣，添加益生元促进肠道健康，非油炸工艺，入口即化。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品3：小鸭子泡芙 -->
+                        <div class="product-card" data-category="puff">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/puff3.jpg" alt="小鸭子泡芙" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🦆</div>
+                                        <div class="fallback-text">小鸭子泡芙</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">小鸭子泡芙</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">动物系列</span>
                                     <span class="product-tag">高钙</span>
                                     <span class="product-tag">清洁标签</span>
-                                    <span class="product-tag">常规系列</span>
                                 </div>
-                                <p class="product-desc">专为婴幼儿设计，手指形状方便抓握，强化钙质吸收，使用进口乳粉，无额外添加。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">可爱小鸭子造型，高钙配方强化骨骼发育，适合6M+宝宝抓握训练与认知启蒙。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(102, 187, 106, 0.1); color: #66bb6a;">
-                                🦈
+                        <!-- 产品4：小鱼泡芙 -->
+                        <div class="product-card" data-category="puff">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/puff4.jpg" alt="小鱼泡芙" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🐟</div>
+                                        <div class="fallback-text">小鱼泡芙</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">海洋动物DHA泡芙</div>
+                                <div class="product-name">小鱼泡芙</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">DHA</span>
                                     <span class="product-tag">海洋生物系列</span>
+                                    <span class="product-tag">DHA</span>
                                     <span class="product-tag">脑部发育</span>
                                 </div>
-                                <p class="product-desc">趣味海洋动物造型，添加DHA促进脑部发育，适合8M+宝宝抓握训练与认知启蒙。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 213, 79, 0.1); color: #ffd54f;">
-                                🍓
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">益生元水果乐园泡芙</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">益生元</span>
-                                    <span class="product-tag">水果系列</span>
-                                    <span class="product-tag">肠道健康</span>
-                                </div>
-                                <p class="product-desc">水果造型泡芙，添加益生元促进肠道菌群平衡，多种水果风味激发宝宝进食兴趣。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 138, 101, 0.1); color: #ff8a65;">
-                                🐰
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">动物系列高铁泡芙</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">高铁</span>
-                                    <span class="product-tag">动物系列</span>
-                                    <span class="product-tag">预防贫血</span>
-                                </div>
-                                <p class="product-desc">可爱动物造型，强化铁元素，预防婴幼儿贫血，适合6M+宝宝辅食添加。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">小鱼造型泡芙，添加DHA促进脑部发育，海洋主题激发宝宝探索兴趣。</p>
                             </div>
                         </div>
                     </div>
@@ -1457,51 +1599,78 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(102, 187, 106, 0.1); color: #66bb6a;">
-                                ⚡
+                        <!-- 产品1：五黑芝士谷物棒 -->
+                        <div class="product-card" data-category="bar">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/grain1.jpg" alt="五黑芝士谷物棒" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">⚡</div>
+                                        <div class="fallback-text">五黑芝士谷物棒</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">高蛋白能量谷物棒</div>
+                                <div class="product-name">五黑芝士谷物棒</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">高蛋白</span>
-                                    <span class="product-tag">低GI</span>
-                                    <span class="product-tag">健身</span>
+                                    <span class="product-tag">五黑配方</span>
+                                    <span class="product-tag">芝士风味</span>
+                                    <span class="product-tag">高纤维</span>
                                 </div>
-                                <p class="product-desc">专为健身人群设计，高蛋白含量，低GI配方，提供持久能量，运动前后皆宜。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">黑芝麻、黑豆、黑米等五黑配方，搭配浓郁芝士风味，高纤维高营养，健康能量补给。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 138, 101, 0.1); color: #ff8a65;">
-                                🌶️
+                        <!-- 产品2：蔬菜谷物棒 -->
+                        <div class="product-card" data-category="bar">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/grain2.jpg" alt="蔬菜谷物棒" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🥦</div>
+                                        <div class="fallback-text">蔬菜谷物棒</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">猎奇风味谷物棒</div>
+                                <div class="product-name">蔬菜谷物棒</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">蔬菜营养</span>
+                                    <span class="product-tag">低GI</span>
+                                    <span class="product-tag">代餐优选</span>
+                                </div>
+                                <p class="product-desc">多种蔬菜颗粒融入谷物棒，补充维生素与膳食纤维，低GI配方，适合控糖人群代餐。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品3：风味谷物棒 -->
+                        <div class="product-card" data-category="bar">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/grain3.jpg" alt="风味谷物棒" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌶️</div>
+                                        <div class="fallback-text">风味谷物棒</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">风味谷物棒</div>
                                 <div class="product-tags">
                                     <span class="product-tag">创新风味</span>
                                     <span class="product-tag">年轻消费</span>
-                                    <span class="product-tag">话题产品</span>
-                                </div>
-                                <p class="product-desc">冬阴功、麻辣等猎奇风味，吸引年轻消费者，打造社交话题性零食。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 213, 79, 0.1); color: #ffd54f;">
-                                🍫
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">朱古力涂层谷物棒</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">涂层工艺</span>
                                     <span class="product-tag">休闲零食</span>
-                                    <span class="product-tag">美味享受</span>
                                 </div>
-                                <p class="product-desc">外裹优质朱古力涂层，口感层次丰富，满足休闲零食需求，兼具美味与营养。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">融合多种猎奇风味，满足年轻消费者尝鲜需求，口感层次丰富，休闲零食新选择。</p>
                             </div>
                         </div>
                     </div>
@@ -1692,51 +1861,53 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 138, 101, 0.1); color: #ff8a65;">
-                                🦐
+                        <!-- 产品1：高钙鲜虾片 -->
+                        <div class="product-card" data-category="shrimp">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/shrimp1.jpg" alt="高钙鲜虾片" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🦐</div>
+                                        <div class="fallback-text">高钙鲜虾片</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">婴标鲜虾片</div>
+                                <div class="product-name">高钙鲜虾片</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">婴标</span>
+                                    <span class="product-tag">高钙</span>
                                     <span class="product-tag">非油炸</span>
+                                    <span class="product-tag">婴标品质</span>
+                                </div>
+                                <p class="product-desc">真实虾肉添加，非油炸工艺，强化钙质，专为婴幼儿设计，无添加盐糖，健康营养。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品2：鳕鱼片 -->
+                        <div class="product-card" data-category="shrimp">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/shrimp2.jpg" alt="鳕鱼片" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🐟</div>
+                                        <div class="fallback-text">鳕鱼片</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">鳕鱼片</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">鳕鱼</span>
                                     <span class="product-tag">高蛋白</span>
+                                    <span class="product-tag">DHA</span>
                                 </div>
-                                <p class="product-desc">专为婴幼儿设计，无添加盐糖，真实虾肉添加，非油炸工艺，健康营养。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 138, 101, 0.1); color: #ff8a65;">
-                                🍅
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">番茄味虾片</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">番茄风味</span>
-                                    <span class="product-tag">休闲零食</span>
-                                    <span class="product-tag">儿童喜爱</span>
-                                </div>
-                                <p class="product-desc">酸甜番茄风味搭配鲜虾本味，口感层次丰富，深受儿童喜爱。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 138, 101, 0.1); color: #ff8a65;">
-                                🌶️
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">芥末海苔虾片</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">成人风味</span>
-                                    <span class="product-tag">刺激口感</span>
-                                    <span class="product-tag">佐餐零食</span>
-                                </div>
-                                <p class="product-desc">芥末与海苔的完美结合，刺激口感，适合成人作为酒水搭档。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">选用优质鳕鱼，富含DHA与优质蛋白，非油炸膨化工艺，口感酥脆，营养丰富。</p>
                             </div>
                         </div>
                     </div>
@@ -1941,51 +2112,53 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 213, 79, 0.1); color: #ffd54f;">
-                                🌀
+                        <!-- 产品1：无糖黄油鸡蛋卷 -->
+                        <div class="product-card" data-category="roll">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/egg-roll1.jpg" alt="无糖黄油鸡蛋卷" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌀</div>
+                                        <div class="fallback-text">无糖黄油鸡蛋卷</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">经典原味蛋卷</div>
+                                <div class="product-name">无糖黄油鸡蛋卷</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">经典</span>
-                                    <span class="product-tag">酥脆</span>
-                                    <span class="product-tag">蛋香浓郁</span>
+                                    <span class="product-tag">无糖</span>
+                                    <span class="product-tag">黄油</span>
+                                    <span class="product-tag">低GI</span>
                                 </div>
-                                <p class="product-desc">传统工艺制作，128层酥脆口感，纯正蛋香，回味无穷。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">传统工艺制作，无糖配方，使用优质黄油，128层酥脆口感，适合控糖人群。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 213, 79, 0.1); color: #ffd54f;">
-                                🍵
+                        <!-- 产品2：新风尚鸡蛋卷 -->
+                        <div class="product-card" data-category="roll">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/egg-roll2.jpg" alt="新风尚鸡蛋卷" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🥚</div>
+                                        <div class="fallback-text">新风尚鸡蛋卷</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">日式抹茶蛋卷</div>
+                                <div class="product-name">新风尚鸡蛋卷</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">抹茶风味</span>
-                                    <span class="product-tag">日式风格</span>
-                                    <span class="product-tag">茶点搭档</span>
+                                    <span class="product-tag">创新风味</span>
+                                    <span class="product-tag">时尚包装</span>
+                                    <span class="product-tag">年轻消费</span>
                                 </div>
-                                <p class="product-desc">选用日本宇治抹茶，茶香清新，口感细腻，搭配茶饮绝佳。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(255, 213, 79, 0.1); color: #ffd54f;">
-                                🥥
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">椰香蛋卷</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">热带风味</span>
-                                    <span class="product-tag">椰香浓郁</span>
-                                    <span class="product-tag">休闲零食</span>
-                                </div>
-                                <p class="product-desc">添加天然椰浆，椰香与蛋香完美融合，带来热带风情体验。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">融合现代创新风味，时尚包装设计，满足年轻消费者需求，传统与创新的完美结合。</p>
                             </div>
                         </div>
                     </div>
@@ -2162,51 +2335,53 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(186, 104, 200, 0.1); color: #ba68c8;">
-                                🍘
+                        <!-- 产品1：五彩米饼 -->
+                        <div class="product-card" data-category="rice">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/rice1.jpg" alt="五彩米饼" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌈</div>
+                                        <div class="fallback-text">五彩米饼</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">婴标原味米饼</div>
+                                <div class="product-name">五彩米饼</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">婴标</span>
-                                    <span class="product-tag">非油炸</span>
-                                    <span class="product-tag">入口即化</span>
+                                    <span class="product-tag">多彩造型</span>
+                                    <span class="product-tag">天然色素</span>
+                                    <span class="product-tag">儿童喜爱</span>
                                 </div>
-                                <p class="product-desc">专为婴幼儿设计，无添加盐糖，纯大米制作，入口即化，锻炼抓握能力。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">五种天然色彩，由蔬菜水果提取色素，造型可爱，激发儿童进食兴趣，非油炸工艺。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(186, 104, 200, 0.1); color: #ba68c8;">
-                                🍯
+                        <!-- 产品2：三角脆片 -->
+                        <div class="product-card" data-category="rice">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/rice2.jpg" alt="三角脆片" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🔺</div>
+                                        <div class="fallback-text">三角脆片</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">蜂蜜黄油米饼</div>
+                                <div class="product-name">三角脆片</div>
                                 <div class="product-tags">
-                                    <span class="product-tag">蜂蜜黄油</span>
-                                    <span class="product-tag">韩国风味</span>
-                                    <span class="product-tag">休闲零食</span>
+                                    <span class="product-tag">三角造型</span>
+                                    <span class="product-tag">易抓握</span>
+                                    <span class="product-tag">婴标品质</span>
                                 </div>
-                                <p class="product-desc">蜂蜜与黄油的完美融合，韩国流行风味，香甜不腻，休闲零食首选。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(186, 104, 200, 0.1); color: #ba68c8;">
-                                🌶️
-                            </div>
-                            <div class="product-info">
-                                <div class="product-name">香辣小炒米饼</div>
-                                <div class="product-tags">
-                                    <span class="product-tag">猎奇风味</span>
-                                    <span class="product-tag">成人零食</span>
-                                    <span class="product-tag">中国特色</span>
-                                </div>
-                                <p class="product-desc">还原中式小炒风味，香辣开胃，适合成人作为休闲零食或下酒菜。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">三角形设计便于婴幼儿抓握，入口即化，无添加盐糖，纯大米制作，锻炼手眼协调能力。</p>
                             </div>
                         </div>
                     </div>
@@ -2426,67 +2601,178 @@
                     </div>
                     
                     <div class="products-grid">
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(77, 182, 172, 0.1); color: #4db6ac;">
-                                🌾
+                        <!-- 产品1：高纤谷物片 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others1.jpg" alt="高纤谷物片" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌾</div>
+                                        <div class="fallback-text">高纤谷物片</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">高纤谷物早餐片</div>
+                                <div class="product-name">高纤谷物片</div>
                                 <div class="product-tags">
                                     <span class="product-tag">高纤维</span>
-                                    <span class="product-tag">早餐</span>
-                                    <span class="product-tag">健康</span>
+                                    <span class="product-tag">早餐优选</span>
+                                    <span class="product-tag">低脂</span>
                                 </div>
-                                <p class="product-desc">多种谷物混合，高纤维含量，即食早餐选择，搭配牛奶或酸奶食用。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">多种谷物混合，高纤维含量，低脂配方，即食早餐选择，搭配牛奶或酸奶食用更佳。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(77, 182, 172, 0.1); color: #4db6ac;">
-                                🥜
+                        <!-- 产品2：豌豆脆 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others2.jpg" alt="豌豆脆" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🥜</div>
+                                        <div class="fallback-text">豌豆脆</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">鹰嘴豆脆</div>
+                                <div class="product-name">豌豆脆</div>
                                 <div class="product-tags">
                                     <span class="product-tag">植物蛋白</span>
-                                    <span class="product-tag">高蛋白</span>
-                                    <span class="product-tag">素食</span>
+                                    <span class="product-tag">非油炸</span>
+                                    <span class="product-tag">休闲零食</span>
                                 </div>
-                                <p class="product-desc">鹰嘴豆为主要原料，高植物蛋白含量，非油炸工艺，健康零食选择。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">豌豆为主要原料，高植物蛋白含量，非油炸膨化工艺，口感酥脆，健康零食选择。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(77, 182, 172, 0.1); color: #4db6ac;">
-                                🍿
+                        <!-- 产品3：爆米花 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others3.jpg" alt="爆米花" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🍿</div>
+                                        <div class="fallback-text">爆米花</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">焦糖爆米花</div>
+                                <div class="product-name">爆米花</div>
                                 <div class="product-tags">
                                     <span class="product-tag">观影零食</span>
-                                    <span class="product-tag">焦糖风味</span>
+                                    <span class="product-tag">非油炸</span>
                                     <span class="product-tag">分享装</span>
                                 </div>
-                                <p class="product-desc">非油炸爆米花，焦糖涂层均匀，甜而不腻，观影娱乐最佳伴侣。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">非油炸爆米花，多种口味选择，低脂健康，观影娱乐最佳伴侣，适合朋友聚会分享。</p>
                             </div>
                         </div>
                         
-                        <div class="product-card">
-                            <div class="product-visual" style="background: rgba(77, 182, 172, 0.1); color: #4db6ac;">
-                                🔥
+                        <!-- 产品4：星球杯 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others4.jpg" alt="星球杯" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌍</div>
+                                        <div class="fallback-text">星球杯</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="product-info">
-                                <div class="product-name">烤奶皮</div>
+                                <div class="product-name">星球杯</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">趣味包装</span>
+                                    <span class="product-tag">儿童零食</span>
+                                    <span class="product-tag">创意设计</span>
+                                </div>
+                                <p class="product-desc">星球造型趣味包装，内含多种谷物与果干，创意设计激发儿童食欲，营养均衡搭配。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品5：烤奶条 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others5.jpg" alt="烤奶条" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🔥</div>
+                                        <div class="fallback-text">烤奶条</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">烤奶条</div>
                                 <div class="product-tags">
                                     <span class="product-tag">高蛋白</span>
                                     <span class="product-tag">浓郁奶香</span>
-                                    <span class="product-tag">酥脆</span>
+                                    <span class="product-tag">内蒙古风味</span>
                                 </div>
-                                <p class="product-desc">传统工艺烤制，浓郁奶香，酥脆口感，高蛋白含量，营养健康零食。</p>
-                                <a href="#" class="product-link">查看详情与报价</a>
+                                <p class="product-desc">传统工艺烤制，浓郁奶香，酥脆口感，高蛋白含量，源自内蒙古的经典风味零食。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品6：塔可 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others6.jpg" alt="塔可" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🌮</div>
+                                        <div class="fallback-text">塔可</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">塔可</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">墨西哥风味</span>
+                                    <span class="product-tag">创新形态</span>
+                                    <span class="product-tag">香脆</span>
+                                </div>
+                                <p class="product-desc">墨西哥风味塔可造型，酥脆外皮搭配多种内馅选择，创新零食形态，满足尝鲜需求。</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 产品7：早餐谷物圈 -->
+                        <div class="product-card" data-category="other">
+                            <div class="product-visual">
+                                <div class="image-container">
+                                    <img src="images/others7.jpg" alt="早餐谷物圈" class="product-image"
+                                         onload="this.style.opacity='1'; this.previousElementSibling.style.display='none';"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="image-loading"></div>
+                                    <div class="image-fallback">
+                                        <div class="fallback-icon">🥣</div>
+                                        <div class="fallback-text">早餐谷物圈</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-name">早餐谷物圈</div>
+                                <div class="product-tags">
+                                    <span class="product-tag">早餐谷物</span>
+                                    <span class="product-tag">圈状造型</span>
+                                    <span class="product-tag">营养均衡</span>
+                                </div>
+                                <p class="product-desc">圈状谷物设计，多种谷物混合，营养均衡，即食早餐选择，适合快节奏生活人群。</p>
                             </div>
                         </div>
                     </div>
@@ -2570,7 +2856,29 @@
             // 初始加载时显示总览页
             document.getElementById('overview').classList.add('active');
             document.querySelector('.nav-btn[data-page="overview"]').classList.add('active');
+            
+            // 图片预加载优化
+            function preloadImages() {
+                const images = document.querySelectorAll('.product-image');
+                images.forEach(img => {
+                    // 设置初始透明度为0，加载完成后变为1
+                    img.style.opacity = '0';
+                    img.style.transition = 'opacity 0.3s ease';
+                    
+                    // 如果图片已经缓存，直接显示
+                    if (img.complete) {
+                        img.style.opacity = '1';
+                        const loadingIndicator = img.previousElementSibling;
+                        if (loadingIndicator && loadingIndicator.classList.contains('image-loading')) {
+                            loadingIndicator.style.display = 'none';
+                        }
+                    }
+                });
+            }
+            
+            // 执行图片预加载
+            setTimeout(preloadImages, 100);
         });
     </script>
 </body>
-    </html>
+</html>
